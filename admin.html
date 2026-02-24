@@ -1,40 +1,53 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Admin Panel - Control Center</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Flipkart Admin - Full Control</title>
     <style>
-        .admin-box { background: white; margin: 10px; padding: 15px; border-radius: 8px; box-shadow: 0 0 10px #ccc; }
-        input { width: 90%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; }
-        .btn { background: #fb641b; color: white; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; width: 100%; }
-        table { width: 100%; margin-top: 10px; border-collapse: collapse; }
-        th, td { border: 1px solid #eee; padding: 8px; font-size: 12px; }
+        body { font-family: sans-serif; background: #f1f3f6; padding: 20px; }
+        .box { background: white; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 5px #ccc; }
+        h3 { color: #2874f0; border-bottom: 2px solid #2874f0; padding-bottom: 5px; }
+        input, textarea { width: 95%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 4px; font-family: sans-serif; }
+        .btn { padding: 12px; color: white; border: none; width: 100%; cursor: pointer; font-weight: bold; margin-top: 10px; border-radius: 4px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; }
+        th, td { border: 1px solid #eee; padding: 10px; text-align: left; }
+        .help-text { font-size: 11px; color: #666; margin-bottom: 10px; display: block; }
     </style>
 </head>
-<body style="background:#f1f3f6;">
-
-    <div class="admin-box">
-        <h3>1. Manage Products</h3>
+<body>
+    <div class="box">
+        <h3>1. Add/Update Product</h3>
         <input type="text" id="pName" placeholder="Product Name">
-        <input type="text" id="pImage" placeholder="Image URL">
-        <input type="number" id="pMRP" placeholder="MRP (e.g. 6499)">
-        <input type="number" id="pPrice" placeholder="Selling Price (e.g. 99)">
-        <input type="text" id="pDelivery" placeholder="Delivery (Free Delivery in Two Days)">
-        <button class="btn" onclick="saveProduct()">Save Product</button>
-        <table id="pTable"><thead><tr><th>Img</th><th>Name</th><th>Action</th></tr></thead><tbody id="pBody"></tbody></table>
+        
+        <input type="text" id="pImage" placeholder="Main Images (Comma separated links)">
+        <span class="help-text">*Example: link1.jpg, link2.jpg, link3.jpg</span>
+
+        <div style="display:flex; gap:10px;">
+            <input type="number" id="pMRP" placeholder="MRP Price">
+            <input type="number" id="pPrice" placeholder="Selling Price">
+        </div>
+
+        <input type="text" id="pDelivery" placeholder="Delivery Info (e.g., Free Delivery by Tomorrow)">
+        <textarea id="pDesc" rows="3" placeholder="Short Description text..."></textarea>
+        
+        <input type="text" id="pDescImgs" placeholder="Long Description Images (Comma separated links)">
+        <span class="help-text">*Ye images product details mein niche lambi list ki tarah dikhengi.</span>
+
+        <button class="btn" style="background:#fb641b;" onclick="saveProduct()">UPLOAD TO FLIPKART</button>
+        
+        <table id="pTable">
+            <thead><tr><th>Img</th><th>Name</th><th>Price</th><th>Action</th></tr></thead>
+            <tbody id="pBody"></tbody>
+        </table>
     </div>
 
-    <div class="admin-box">
-        <h3>2. Manage Sliders (Multiple)</h3>
-        <input type="text" id="sUrl" placeholder="Slider Image URL">
-        <button class="btn" style="background:#2874f0;" onclick="addSlider()">Add Banner</button>
-        <div id="sList" style="display:flex; gap:5px; margin-top:10px; overflow-x:auto;"></div>
-    </div>
-
-    <div class="admin-box">
-        <h3>3. Manage Category Strip</h3>
-        <input type="text" id="cUrl" placeholder="Category Strip URL">
-        <button class="btn" style="background:#388e3c;" onclick="updateCat()">Update Strip</button>
+    <div class="box">
+        <h3>2. Header & Banner Management</h3>
+        <input type="text" id="sUrl" placeholder="Slider Banner Image URL">
+        <button class="btn" style="background:#2874f0;" onclick="addSlider()">ADD BANNER</button>
+        <div id="sList" style="display:flex; gap:10px; margin:10px 0; overflow-x:auto; padding:10px;"></div>
+        <hr>
+        <input type="text" id="cUrl" placeholder="Category Strip URL (Icons Image)">
+        <button class="btn" style="background:#388e3c;" onclick="updateCat()">UPDATE CATEGORY STRIP</button>
     </div>
 
     <script type="module" src="app.js"></script>
