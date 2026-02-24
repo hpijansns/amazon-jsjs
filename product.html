@@ -4,38 +4,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <style>
-        .detail-white { background: white; padding: 15px; margin-bottom: 8px; }
-        .img-slider { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; background: white; }
+        .img-slider { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; background: white; border-bottom: 1px solid #eee; }
         .img-slider img { width: 100%; flex-shrink: 0; height: 300px; object-fit: contain; scroll-snap-align: start; }
-        .warranty-card { border: 1px solid #e0e0e0; padding: 10px; display: flex; align-items: center; gap: 10px; border-radius: 4px; margin-top: 10px; }
+        .detail-box { background: white; padding: 15px; margin-bottom: 8px; }
     </style>
 </head>
-<body>
-    <div class="header" style="display:flex; align-items:center; gap:12px;">
-        <span onclick="history.back()">&larr;</span>
-        <div style="flex:1">Product Details</div>
-        <span>🛒</span>
+<body style="padding-bottom: 60px;">
+    <div class="header-main" style="display:flex; align-items:center; gap:15px; color:white;">
+        <span onclick="history.back()">&larr;</span> <span>Product Details</span>
     </div>
 
     <div class="img-slider" id="mainImages"></div>
 
-    <div class="detail-white">
+    <div class="detail-box">
         <div id="dN" style="font-size:15px; margin-bottom:10px;"></div>
-        <div>
-            <span id="dO" style="color:#388e3c; font-weight:bold; font-size:18px;"></span>
-            <span id="dM" style="text-decoration:line-through; color:#878787; margin-left:8px;"></span>
-        </div>
+        <div><span id="dO" style="color:#388e3c; font-weight:bold; font-size:18px;"></span> <span id="dM" style="text-decoration:line-through; color:#878787; margin-left:8px;"></span></div>
         <div id="dP" style="font-size:24px; font-weight:bold;"></div>
-        
-        <div class="warranty-card">
+        <div style="border:1px solid #ddd; padding:10px; display:flex; align-items:center; gap:10px; border-radius:4px; margin-top:10px;">
             <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/fa_62965a.png" width="60">
-            <div style="font-size:11px;">1 Year Brand Warranty <br><span style="color:#2874f0;">Know More</span></div>
+            <div style="font-size:11px;">1 Year Brand Warranty & Replacement</div>
         </div>
     </div>
 
-    <div id="descContainer" class="detail-white">
-        <h4 style="margin-top:0; font-size:14px;">Description</h4>
-        <p id="dD" style="font-size:13px; color:#666;"></p>
+    <div class="detail-box">
+        <h4 style="margin:0 0 10px 0; font-size:14px;">Product Description</h4>
+        <p id="dD" style="font-size:13px; color:#666; margin:0;"></p>
     </div>
 
     <div id="longImgs" style="background:white;"></div>
@@ -53,15 +46,13 @@
         document.getElementById('dO').innerText = u.get('off') + "% Off";
         document.getElementById('dD').innerText = u.get('desc');
 
-        // Main Images Slider
-        u.get('img').split(',').forEach(i => {
-            document.getElementById('mainImages').innerHTML += `<img src="${i.trim()}">`;
+        u.get('img').split(',').map(i => i.trim()).filter(Boolean).forEach(img => {
+            document.getElementById('mainImages').innerHTML += `<img src="${img}">`;
         });
 
-        // Description Images
-        if(u.get('descImgs')){
-            u.get('descImgs').split(',').forEach(i => {
-                document.getElementById('longImgs').innerHTML += `<img src="${i.trim()}" style="width:100%; display:block;">`;
+        if(u.get('descImgs')) {
+            u.get('descImgs').split(',').map(i => i.trim()).filter(Boolean).forEach(img => {
+                document.getElementById('longImgs').innerHTML += `<img src="${img}" style="width:100%; display:block;">`;
             });
         }
 
