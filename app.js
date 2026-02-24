@@ -14,138 +14,66 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// ==========================================
-// 1. ADMIN FUNCTIONS (Global for Buttons)
-// ==========================================
-
 window.saveProduct = () => {
     const name = document.getElementById('pName').value;
-    const image = document.getElementById('pImage').value;
+    const img = document.getElementById('pImage').value; // Comma separated
     const mrp = document.getElementById('pMRP').value;
-    const price = document.getElementById('pPrice').value;
+    const prc = document.getElementById('pPrice').value;
     const del = document.getElementById('pDelivery').value;
+    const desc = document.getElementById('pDesc').value;
+    const dImgs = document.getElementById('pDescImgs').value; // Comma separated
 
-    if(name && image && mrp && price) {
-        const offPercent = Math.round(((mrp - price) / mrp) * 100);
-        push(ref(db, 'products'), {
-            name, image, mrp, price, del, off: offPercent
-        }).then(() => {
-            alert("Product Added!");
-            location.reload();
-        });
-    } else { alert("Sari details bhariye!"); }
+    if(name && img && prc){
+        const off = Math.round(((mrp - prc) / mrp) * 100);
+        push(ref(db, 'products'), { name, image: img, mrp, price: prc, del, off, desc, descImgs: dImgs })
+        .then(() => { alert("Product Live!"); location.reload(); });
+    }
 };
 
 window.addSlider = () => {
     const url = document.getElementById('sUrl').value;
-    if(url) {
-        push(ref(db, 'sliders'), { url }).then(() => {
-            alert("Slider Banner Added!");
-            document.getElementById('sUrl').value = "";
-        });
-    }
+    if(url) push(ref(db, 'sliders'), { url }).then(() => alert("Slider Added!"));
 };
 
 window.updateCat = () => {
     const url = document.getElementById('cUrl').value;
-    if(url) {
-        set(ref(db, 'catStrip'), { url }).then(() => alert("Category Strip Updated!"));
-    }
+    if(url) set(ref(db, 'catStrip'), { url }).then(() => alert("Category Strip Updated!"));
 };
 
-window.deleteItem = (path) => {
-    if(confirm("Kya aap ise delete karna chahte hain?")) {
-        remove(ref(db, path));
-    }
-};
+window.deleteItem = (path) => { if(confirm("Delete?")) remove(ref(db, path)); };
 
-// ==========================================
-// 2. DATA LOAD & UI LOGIC (Index & Admin)
-// ==========================================
-
-// --- Products Fetching ---
+// Real-time Fetching
 onValue(ref(db, 'products'), (snap) => {
-    const grid = document.getElementById('productGrid');
-    const pBody = document.getElementById('pBody');
-    if(grid) grid.innerHTML = "";
-    if(pBody) pBody.innerHTML = "";
-
+    const grid = document.getElementById('productGrid'), pBody = document.getElementById('pBody');
+    if(grid) grid.innerHTML = ""; if(pBody) pBody.innerHTML = "";
     snap.forEach(child => {
-        const p = child.val();
-        const key = child.key;
+        const p = child.val(), k = child.key;
+        // Sending all data to product.html via URL
+        const link = `product.html?name=${encodeURIComponent(p.name)}&img=${encodeURIComponent(p.image)}&mrp=${p.mrp}&price=${p.price}&off=${p.off}&del=${encodeURIComponent(p.del)}&desc=${encodeURIComponent(p.desc || '')}&descImgs=${encodeURIComponent(p.descImgs || '')}`;
         
-        // URL for Product Details (Next Page)
-        const detailLink = `product.html?name=${encodeURIComponent(p.name)}&img=${encodeURIComponent(p.image)}&mrp=${p.mrp}&price=${p.price}&off=${p.off}&del=${encodeURIComponent(p.del)}`;
-
-        // For Index Page
-        if(grid) {
-            grid.innerHTML += `
-            <a href="${detailLink}" class="card">
-                <img src="${p.image}">
+        if(grid) grid.innerHTML += `
+            <a href="${link}" class="card">
+                <img src="${p.image.split(',')[0]}">
                 <div class="p-title">${p.name}</div>
                 <div><span class="p-off">${p.off}% Off</span> <span class="p-mrp">₹${p.mrp}</span></div>
                 <span class="p-price">₹${p.price}</span>
                 <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/fa_62965a.png" class="assured-img">
-                <div class="p-del">${p.del}</div>
             </a>`;
-        }
-        
-        // For Admin Page Table
-        if(pBody) {
-            pBody.innerHTML += `
-            <tr>
-                <td><img src="${p.image}" width="40"></td>
-                <td>${p.name}</td>
-                <td><button onclick="deleteItem('products/${key}')" style="background:red;color:white;border:none;padding:5px;">Delete</button></td>
-            </tr>`;
-        }
+        if(pBody) pBody.innerHTML += `<tr><td><img src="${p.image.split(',')[0]}" width="30"></td><td>${p.name}</td><td>₹${p.price}</td><td><button onclick="deleteItem('products/${k}')">X</button></td></tr>`;
     });
 });
 
-// --- Slider Logic (Responsive & Auto-play) ---
+// Slider & Category (same as before)
 onValue(ref(db, 'sliders'), (snap) => {
     const urls = [];
-    const sList = document.getElementById('sList');
-    if(sList) sList.innerHTML = "";
-
-    snap.forEach(c => {
-        const d = c.val();
-        urls.push(d.url);
-        if(sList) {
-            sList.innerHTML += `<div style="position:relative;margin-right:10px;">
-                <img src="${d.url}" width="100">
-                <button onclick="deleteItem('sliders/${c.key}')" style="position:absolute;top:0;right:0;background:red;color:white;border:none;">X</button>
-            </div>`;
-        }
-    });
-
-    let i = 0;
-    const sliderImg = document.getElementById('sliderImg');
-    if(urls.length > 0 && sliderImg) {
-        sliderImg.src = urls[0];
-        setInterval(() => {
-            i = (i + 1) % urls.length;
-            sliderImg.src = urls[i];
-        }, 3000); // 3 seconds per slide
+    snap.forEach(c => urls.push(c.val().url));
+    let i = 0; const sImg = document.getElementById('sliderImg');
+    if(urls.length > 0 && sImg){ 
+        sImg.src = urls[0]; 
+        setInterval(() => { i = (i + 1) % urls.length; sImg.src = urls[i]; }, 3000); 
     }
 });
+onValue(ref(db, 'catStrip'), (snap) => { if(document.getElementById('catImgDisplay') && snap.val()) document.getElementById('catImgDisplay').src = snap.val().url; });
 
-// --- Category Strip ---
-onValue(ref(db, 'catStrip'), (snap) => {
-    const catDisplay = document.getElementById('catImgDisplay');
-    if(catDisplay && snap.val()) {
-        catDisplay.src = snap.val().url;
-    }
-});
-
-// --- Countdown Timer (10 Minutes) ---
-let time = 600; 
-const timerElement = document.getElementById('countdown');
-if(timerElement) {
-    setInterval(() => {
-        let minutes = Math.floor(time / 60);
-        let seconds = time % 60;
-        timerElement.innerText = `${minutes}:${seconds < 10 ? '0'+seconds : seconds}`;
-        if(time > 0) time--;
-    }, 1000);
-}
+// Timer Logic
+let t = 600; setInterval(() => { if(document.getElementById('countdown')){ let m=Math.floor(t/60), s=t%60; document.getElementById('countdown').innerText=`${m}:${s<10?'0'+s:s}`; if(t>0)t--; } }, 1000);
