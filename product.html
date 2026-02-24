@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body style="background: white;">
+    <div class="header" style="display:flex; align-items:center; gap:15px;">
+        <span onclick="history.back()" style="font-size:24px;">←</span>
+        <span>Product Details</span>
+    </div>
+
+    <div style="padding: 15px; text-align: center;">
+        <img id="dImg" style="width:100%; max-height:350px; object-fit:contain;">
+        <h1 id="dName" style="font-size:16px; font-weight:400; text-align:left; margin-top:20px;"></h1>
+        <div style="text-align:left; margin-top:10px;">
+            <span id="dOff" style="color:#388e3c; font-weight:bold; font-size:18px;"></span>
+            <span id="dMrp" style="text-decoration:line-through; color:#878787; margin-left:10px;"></span>
+            <div id="dPrice" style="font-size:26px; font-weight:bold;"></div>
+            <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/fa_62965a.png" width="70">
+            <p id="dDel" style="font-size:14px; color: green; font-weight:500;"></p>
+        </div>
+    </div>
+
+    <div class="footer-btns">
+        <button class="cart-btn">ADD TO CART</button>
+        <button class="buy-btn" onclick="alert('Proceeding to Checkout...')">BUY NOW</button>
+    </div>
+
+    <script>
+        const p = new URLSearchParams(window.location.search);
+        document.getElementById('dImg').src = p.get('img');
+        document.getElementById('dName').innerText = p.get('name');
+        document.getElementById('dPrice').innerText = "₹" + p.get('price');
+        document.getElementById('dMrp').innerText = "₹" + p.get('mrp');
+        document.getElementById('dOff').innerText = p.get('off') + "% Off";
+        document.getElementById('dDel').innerText = p.get('del');
+    </script>
+</body>
+</html>
