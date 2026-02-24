@@ -14,32 +14,58 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// --- ADMIN FUNCTIONS ---
+// --- ADMIN FUNCTIONS (Attached to Window for HTML Buttons) ---
+
 window.saveProduct = () => {
-    const data = {
-        name: document.getElementById('pName').value,
-        image: document.getElementById('pImage').value,
-        mrp: document.getElementById('pMRP').value,
-        price: document.getElementById('pPrice').value,
-        del: document.getElementById('pDelivery').value,
-        off: Math.round(((document.getElementById('pMRP').value - document.getElementById('pPrice').value) / document.getElementById('pMRP').value) * 100)
-    };
-    push(ref(db, 'products'), data);
+    const name = document.getElementById('pName').value;
+    const image = document.getElementById('pImage').value;
+    const mrp = document.getElementById('pMRP').value;
+    const price = document.getElementById('pPrice').value;
+    const del = document.getElementById('pDelivery').value;
+
+    if(name && image && mrp && price) {
+        const offPercent = Math.round(((mrp - price) / mrp) * 100);
+        push(ref(db, 'products'), {
+            name, image, mrp, price, del, off: offPercent
+        }).then(() => {
+            alert("Product Added Successfully!");
+            // Clear inputs
+            document.getElementById('pName').value = "";
+            document.getElementById('pImage').value = "";
+        });
+    } else {
+        alert("Please fill all fields!");
+    }
 };
 
 window.addSlider = () => {
     const url = document.getElementById('sUrl').value;
-    push(ref(db, 'sliders'), { url });
+    if(url) {
+        push(ref(db, 'sliders'), { url }).then(() => {
+            alert("Slider Added!");
+            document.getElementById('sUrl').value = "";
+        });
+    }
 };
 
 window.updateCat = () => {
     const url = document.getElementById('cUrl').value;
-    set(ref(db, 'catStrip'), { url });
+    if(url) {
+        set(ref(db, 'catStrip'), { url }).then(() => {
+            alert("Category Strip Updated!");
+        });
+    }
 };
 
-// --- REAL-TIME UPDATES (FOR BOTH PAGES) ---
+window.deleteItem = (path) => {
+    if(confirm("Are you sure?")) {
+        remove(ref(db, path));
+    }
+};
 
-// 1. Products
+// --- REAL-TIME DATA FETCHING ---
+
+// 1. Products Load
 onValue(ref(db, 'products'), (snap) => {
     const grid = document.getElementById('productGrid');
     const pBody = document.getElementById('pBody');
@@ -48,7 +74,11 @@ onValue(ref(db, 'products'), (snap) => {
 
     snap.forEach(child => {
         const p = child.val();
-        if(grid) grid.innerHTML += `
+        const key = child.key;
+        
+        // UI for Index Page
+        if(grid) {
+            grid.innerHTML += `
             <div class="card">
                 <img src="${p.image}">
                 <div class="p-title">${p.name}</div>
@@ -57,35 +87,63 @@ onValue(ref(db, 'products'), (snap) => {
                 <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/fa_62965a.png" class="assured-img">
                 <div class="p-del">${p.del}</div>
             </div>`;
-        if(pBody) pBody.innerHTML += `<tr><td><img src="${p.image}" width="30"></td><td>${p.name}</td><td><button onclick="remove('${child.key}')">X</button></td></tr>`;
+        }
+        
+        // Table for Admin Page
+        if(pBody) {
+            pBody.innerHTML += `
+            <tr>
+                <td><img src="${p.image}" width="30"></td>
+                <td>${p.name}</td>
+                <td><button onclick="deleteItem('products/${key}')" style="background:red; color:white; border:none; padding:5px;">Delete</button></td>
+            </tr>`;
+        }
     });
 });
 
-// 2. Sliders
+// 2. Sliders Logic
 onValue(ref(db, 'sliders'), (snap) => {
     const urls = [];
-    snap.forEach(c => urls.push(c.val().url));
+    const sList = document.getElementById('sList');
+    if(sList) sList.innerHTML = "";
+
+    snap.forEach(c => {
+        const data = c.val();
+        urls.push(data.url);
+        if(sList) {
+            sList.innerHTML += `
+            <div style="position:relative;">
+                <img src="${data.url}" width="100" height="50">
+                <button onclick="deleteItem('sliders/${c.key}')" style="position:absolute; top:0; right:0; background:red; color:white; border:none;">X</button>
+            </div>`;
+        }
+    });
+
     let i = 0;
-    if(urls.length > 0 && document.getElementById('sliderImg')){
+    const sliderImg = document.getElementById('sliderImg');
+    if(urls.length > 0 && sliderImg){
+        sliderImg.src = urls[0]; // Set first image
         setInterval(() => {
-            document.getElementById('sliderImg').src = urls[i];
             i = (i + 1) % urls.length;
+            sliderImg.src = urls[i];
         }, 3000);
     }
 });
 
-// 3. Category Strip
+// 3. Category Strip Logic
 onValue(ref(db, 'catStrip'), (snap) => {
     const img = document.getElementById('catImgDisplay');
     if(img && snap.val()) img.src = snap.val().url;
 });
 
-// 4. Timer
+// 4. Timer Logic (10 Minutes)
 let time = 600;
-setInterval(() => {
-    let min = Math.floor(time / 60);
-    let sec = time % 60;
-    if(document.getElementById('countdown'))
-        document.getElementById('countdown').innerHTML = `${min}:${sec < 10 ? '0'+sec : sec}`;
-    time--;
-}, 1000);
+const countdownEl = document.getElementById('countdown');
+if(countdownEl) {
+    setInterval(() => {
+        let min = Math.floor(time / 60);
+        let sec = time % 60;
+        countdownEl.innerHTML = `${min}:${sec < 10 ? '0'+sec : sec}`;
+        if(time > 0) time--;
+    }, 1000);
+}
