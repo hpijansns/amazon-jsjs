@@ -3,35 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flipkart Lite - Sale is Live</title>
+    <title>Flipkart Lite</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="header">
-        <div class="top-row">
-            <span class="menu-icon">☰</span>
-            <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/flipkart-plus_8d85f4.png" class="logo">
+        <div class="header-top">
+            <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/flipkart-plus_8d85f4.png" alt="logo" class="logo">
+            <div class="cart-icon">🛒<span class="cart-count">0</span></div>
         </div>
-        <div class="search-container">
+        <div class="search-box">
             <input type="text" placeholder="Search for Products, Brands and More">
         </div>
     </div>
 
-    <div class="categories-section">
-        <img src="https://rukminim1.flixcart.com/fk-p-flap/128/128/image/0d75b34f7d8f13a7.png" style="width:100%" alt="Categories Dummy">
+    <div class="category-container">
+        <img id="catImgDisplay" src="https://rukminim1.flixcart.com/fk-p-flap/128/128/image/0d75b34f7d8f13a7.png" alt="Categories">
     </div>
 
-    <div class="slider">
-        <img src="https://rukminim1.flixcart.com/fk-p-flap/1600/270/image/ed12030b4f8c985e.jpg" id="sliderImg">
+    <div class="slider-container">
+        <img id="sliderImg" src="https://rukminim1.flixcart.com/fk-p-flap/1600/270/image/ed12030b4f8c985e.jpg" alt="Banner">
     </div>
 
-    <div class="deal-header">
-        <div class="deal-left">
-            <span class="deal-title">Deals of the Day</span>
-            <span class="timer">⏰ <span id="countdown">10:00</span></span>
+    <div class="deals-header">
+        <div class="deals-left">
+            <div class="deals-title">Deals of the Day</div>
+            <div class="timer-box">⏰ <span id="countdown">10:00</span></div>
         </div>
-        <div class="sale-live">SALE IS LIVE</div>
+        <div class="sale-tag">SALE IS LIVE</div>
     </div>
 
     <div class="product-grid" id="productGrid">
