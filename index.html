@@ -3,31 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flipkart Online Shopping</title>
+    <title>Flipkart - Shop Online</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Extra polish for Index Page */
+        .header-main {
+            background: #2874f0;
+            padding: 8px 12px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .search-bar-wrap {
+            background: white;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            border-radius: 2px;
+        }
+        .search-bar-wrap input {
+            border: none;
+            padding: 10px;
+            width: 100%;
+            outline: none;
+            font-size: 14px;
+        }
+        .cat-scroll {
+            background: white;
+            overflow-x: auto;
+            display: flex;
+            padding: 10px 5px;
+            margin-bottom: 5px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .cat-scroll img {
+            height: 60px;
+            width: auto;
+            flex-shrink: 0;
+        }
+        .banner-wrap {
+            background: white;
+            width: 100%;
+            height: auto;
+            margin-bottom: 5px;
+        }
+        #sliderImg {
+            width: 100%;
+            display: block;
+            transition: 0.3s ease-in-out;
+        }
+        .deals-section {
+            background: white;
+            margin-top: 5px;
+        }
+        .deals-header {
+            background: #607d8b; /* Special Blue-Grey Flipkart Deal Color */
+            color: white;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .timer-wrap {
+            background: white;
+            color: black;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 13px;
+            margin-left: 8px;
+        }
+        .sale-text {
+            color: #ffeb3b;
+            font-weight: bold;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            animation: blinker 1.5s linear infinite;
+        }
+        @keyframes blinker {
+            50% { opacity: 0; }
+        }
+    </style>
 </head>
 <body>
-    <div class="header">
+
+    <div class="header-main">
         <div class="header-top">
-            <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/flipkart-plus_8d85f4.png" class="logo">
-            <div style="font-size: 20px;">🛒</div>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <span style="font-size:22px; color:white;">☰</span>
+                <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/flipkart-plus_8d85f4.png" style="height:18px;">
+            </div>
+            <div style="color:white; font-size:20px;">🛒</div>
         </div>
-        <div class="search-box"><input type="text" placeholder="Search for Products, Brands and More"></div>
+        <div class="search-bar-wrap">
+            <span style="color:#878787;">🔍</span>
+            <input type="text" placeholder="Search for Products, Brands and More">
+        </div>
     </div>
 
-    <div class="category-container"><img id="catImgDisplay" src=""></div>
-    
-    <div class="slider-container"><img id="sliderImg" src=""></div>
-
-    <div class="deals-header">
-        <div class="deals-left">
-            <span class="deals-title">Deals of the Day</span>
-            <span class="timer-box">⏰ <span id="countdown">10:00</span></span>
-        </div>
-        <div class="sale-live">SALE IS LIVE</div>
+    <div class="cat-scroll">
+        <img id="catImgDisplay" src="">
     </div>
 
-    <div class="product-grid" id="productGrid"></div>
+    <div class="banner-wrap">
+        <img id="sliderImg" src="">
+    </div>
+
+    <div class="deals-section">
+        <div class="deals-header">
+            <div style="display:flex; align-items:center;">
+                <span style="font-size:16px; font-weight:bold;">Deals of the Day</span>
+                <span class="timer-wrap">⏰ <span id="countdown">10:00</span></span>
+            </div>
+            <div class="sale-text">SALE IS LIVE</div>
+        </div>
+
+        <div class="product-grid" id="productGrid">
+            </div>
+    </div>
 
     <script type="module" src="app.js"></script>
 </body>
