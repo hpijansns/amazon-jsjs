@@ -1,55 +1,118 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Flipkart Admin - Full Control</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flipkart Clone - Admin Dashboard</title>
     <style>
-        body { font-family: sans-serif; background: #f1f3f6; padding: 20px; }
-        .box { background: white; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 5px #ccc; }
-        h3 { color: #2874f0; border-bottom: 2px solid #2874f0; padding-bottom: 5px; }
-        input, textarea { width: 95%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 4px; font-family: sans-serif; }
-        .btn { padding: 12px; color: white; border: none; width: 100%; cursor: pointer; font-weight: bold; margin-top: 10px; border-radius: 4px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; }
-        th, td { border: 1px solid #eee; padding: 10px; text-align: left; }
-        .help-text { font-size: 11px; color: #666; margin-bottom: 10px; display: block; }
+        :root { --blue: #2874f0; --orange: #fb641b; --bg: #f1f3f6; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: auto; }
+        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        h2 { color: var(--blue); margin-top: 0; border-bottom: 2px solid var(--bg); padding-bottom: 10px; }
+        
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .full-width { grid-column: span 2; }
+        
+        label { display: block; font-size: 12px; font-weight: bold; color: #666; margin-bottom: 5px; text-transform: uppercase; }
+        input, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 14px; margin-bottom: 15px; }
+        input:focus, textarea:focus { border-color: var(--blue); outline: none; }
+        
+        .btn-upload { background: var(--orange); color: white; border: none; padding: 15px; width: 100%; border-radius: 4px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; }
+        .btn-upload:hover { background: #e85a15; }
+        
+        .help-text { font-size: 11px; color: #888; margin-top: -12px; margin-bottom: 15px; display: block; }
+        
+        /* Table Styles */
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; font-size: 14px; }
+        th { background: var(--blue); color: white; padding: 12px; text-align: left; }
+        td { padding: 12px; border-bottom: 1px solid #eee; }
+        .p-thumb { width: 40px; height: 40px; object-fit: contain; background: #f9f9f9; border-radius: 4px; }
+        
+        /* Slider Preview */
+        #sList { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h3>1. Add/Update Product</h3>
-        <input type="text" id="pName" placeholder="Product Name">
-        
-        <input type="text" id="pImage" placeholder="Main Images (Comma separated links)">
-        <span class="help-text">*Example: link1.jpg, link2.jpg, link3.jpg</span>
 
-        <div style="display:flex; gap:10px;">
-            <input type="number" id="pMRP" placeholder="MRP Price">
-            <input type="number" id="pPrice" placeholder="Selling Price">
+<div class="container">
+    <div class="card">
+        <h2>📦 Product Management</h2>
+        <div class="form-grid">
+            <div class="full-width">
+                <label>Product Full Name</label>
+                <input type="text" id="pName" placeholder="e.g. Apple iPhone 15 (Blue, 128 GB)">
+            </div>
+            
+            <div class="full-width">
+                <label>Main Images (Comma Separated)</label>
+                <input type="text" id="pImage" placeholder="Link1, Link2, Link3...">
+                <span class="help-text">* Tip: Pehla link thumbnail banega. Dusre links slider mein dikhenge.</span>
+            </div>
+
+            <div>
+                <label>MRP Price (₹)</label>
+                <input type="number" id="pMRP" placeholder="79900">
+            </div>
+            <div>
+                <label>Selling Price (₹)</label>
+                <input type="number" id="pPrice" placeholder="65999">
+            </div>
+
+            <div class="full-width">
+                <label>Delivery Info</label>
+                <input type="text" id="pDelivery" placeholder="e.g. Free Delivery by Tomorrow">
+            </div>
+
+            <div class="full-width">
+                <label>Short Description (Text)</label>
+                <textarea id="pDesc" rows="3" placeholder="Write main features here..."></textarea>
+            </div>
+
+            <div class="full-width">
+                <label>Long Description Images (Comma Separated)</label>
+                <input type="text" id="pDescImgs" placeholder="DetailLink1, DetailLink2...">
+                <span class="help-text">* Ye images description ke niche lambi list ki tarah aayengi.</span>
+            </div>
         </div>
+        <button class="btn-upload" onclick="saveProduct()">🚀 UPLOAD PRODUCT</button>
 
-        <input type="text" id="pDelivery" placeholder="Delivery Info (e.g., Free Delivery by Tomorrow)">
-        <textarea id="pDesc" rows="3" placeholder="Short Description text..."></textarea>
-        
-        <input type="text" id="pDescImgs" placeholder="Long Description Images (Comma separated links)">
-        <span class="help-text">*Ye images product details mein niche lambi list ki tarah dikhengi.</span>
-
-        <button class="btn" style="background:#fb641b;" onclick="saveProduct()">UPLOAD TO FLIPKART</button>
-        
-        <table id="pTable">
-            <thead><tr><th>Img</th><th>Name</th><th>Price</th><th>Action</th></tr></thead>
-            <tbody id="pBody"></tbody>
+        <h3>Live Inventory</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Img</th>
+                    <th>Product Name</th>
+                    <th>Price</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="pBody">
+                </tbody>
         </table>
     </div>
 
-    <div class="box">
-        <h3>2. Header & Banner Management</h3>
-        <input type="text" id="sUrl" placeholder="Slider Banner Image URL">
-        <button class="btn" style="background:#2874f0;" onclick="addSlider()">ADD BANNER</button>
-        <div id="sList" style="display:flex; gap:10px; margin:10px 0; overflow-x:auto; padding:10px;"></div>
-        <hr>
-        <input type="text" id="cUrl" placeholder="Category Strip URL (Icons Image)">
-        <button class="btn" style="background:#388e3c;" onclick="updateCat()">UPDATE CATEGORY STRIP</button>
-    </div>
+    <div class="card">
+        <h2>🎨 App Layout Controls</h2>
+        
+        <label>Slider Banner URL</label>
+        <div style="display: flex; gap: 10px;">
+            <input type="text" id="sUrl" placeholder="Paste banner image link here...">
+            <button onclick="addSlider()" style="background: var(--blue); color:white; border:none; padding: 0 20px; border-radius:4px; height:42px; cursor:pointer;">ADD</button>
+        </div>
+        <div id="sList"></div>
 
-    <script type="module" src="app.js"></script>
+        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+
+        <label>Category Strip Image URL</label>
+        <div style="display: flex; gap: 10px;">
+            <input type="text" id="cUrl" placeholder="Paste category strip image link...">
+            <button onclick="updateCat()" style="background: #388e3c; color:white; border:none; padding: 0 20px; border-radius:4px; height:42px; cursor:pointer;">UPDATE</button>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="app.js"></script>
+
 </body>
 </html>
