@@ -3,110 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flipkart Admin - Control Panel</title>
+    <title>Flipkart Clone - Admin Panel</title>
     <style>
-        :root { --f-blue: #2874f0; --f-orange: #fb641b; --bg: #f1f3f6; }
-        body { font-family: -apple-system, sans-serif; background: var(--bg); margin: 0; padding: 20px; }
-        .admin-container { max-width: 800px; margin: auto; }
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        h2 { color: var(--f-blue); margin-top: 0; font-size: 20px; border-bottom: 2px solid var(--bg); padding-bottom: 10px; }
+        body { font-family: sans-serif; background: #f4f7f6; margin: 0; display: flex; }
+        .sidebar { width: 250px; background: #2874f0; color: white; height: 100vh; position: fixed; padding: 20px; }
+        .main-content { margin-left: 290px; padding: 30px; width: 100%; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        h2 { color: #2874f0; margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         
-        .input-group { margin-bottom: 15px; }
-        label { display: block; font-size: 12px; font-weight: bold; color: #666; margin-bottom: 5px; text-transform: uppercase; }
-        input, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
-        textarea { resize: vertical; }
+        label { display: block; margin-top: 15px; font-weight: bold; font-size: 13px; color: #555; }
+        input, textarea, select { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
         
-        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .btn-main { background: var(--f-orange); color: white; border: none; padding: 15px; width: 100%; border-radius: 4px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; }
-        .btn-main:hover { background: #e85a15; }
+        button { background: #fb641b; color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 20px; width: 100%; }
+        button:hover { background: #e65a16; }
         
-        .help-text { font-size: 11px; color: #888; margin-top: 4px; display: block; }
-        
-        /* Product List Table */
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
-        th { background: var(--f-blue); color: white; padding: 10px; text-align: left; font-size: 13px; }
-        td { padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; }
-        .delete-btn { background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; }
+        .payment-box { background: #fff3e0; border-left: 5px solid #ff9800; }
+        .hint { font-size: 11px; color: #888; margin-top: 4px; }
     </style>
 </head>
 <body>
 
-<div class="admin-container">
-    <div class="card">
-        <h2>📦 Add New Product</h2>
-        <div class="input-group">
+    <div class="sidebar">
+        <h2>Flipkart Admin</h2>
+        <p>Dashboard</p>
+        <p>Manage Products</p>
+        <p>Slider Settings</p>
+        <p>Payment Config</p>
+    </div>
+
+    <div class="main-content">
+        
+        <div class="card">
+            <h2>Add New Product</h2>
             <label>Product Name</label>
             <input type="text" id="pName" placeholder="e.g. Apple iPhone 15 (Blue, 128 GB)">
-        </div>
-        
-        <div class="input-group">
-            <label>Product Images (Main Slider)</label>
-            <input type="text" id="pImage" placeholder="Link1, Link2, Link3...">
-            <span class="help-text">Multiple links ko comma (,) se alag karein. Pehla link grid mein dikhega.</span>
-        </div>
+            
+            <label>Main Images (Comma Separated for Slider)</label>
+            <textarea id="pImage" placeholder="link1.jpg, link2.jpg, link3.jpg"></textarea>
+            <div class="hint">Details page par slider dikhane ke liye multiple links comma (,) se alag karein.</div>
 
-        <div class="row">
-            <div class="input-group">
-                <label>MRP Price (₹)</label>
-                <input type="number" id="pMRP" placeholder="79900">
+            <div style="display: flex; gap: 15px;">
+                <div style="flex: 1;">
+                    <label>MRP (Actual Price)</label>
+                    <input type="number" id="pMRP" placeholder="11999">
+                </div>
+                <div style="flex: 1;">
+                    <label>Sale Price (Display Price)</label>
+                    <input type="number" id="pPrice" placeholder="99">
+                </div>
             </div>
-            <div class="input-group">
-                <label>Selling Price (₹)</label>
-                <input type="number" id="pPrice" placeholder="65999">
-            </div>
+
+            <label>Product Description (Text)</label>
+            <textarea id="pDesc" rows="3" placeholder="Write about product features..."></textarea>
+
+            <label>Description Images (Long Images Link)</label>
+            <textarea id="pDescImgs" placeholder="feature-img1.jpg, feature-img2.jpg"></textarea>
+            
+            <button onclick="saveProduct()">Upload Product</button>
         </div>
 
-        <div class="input-group">
-            <label>Text Description</label>
-            <textarea id="pDesc" rows="3" placeholder="Product ke main features yahan likhein..."></textarea>
+        <div class="card">
+            <h2>Slider & Category</h2>
+            <label>Update Category Strip URL</label>
+            <input type="text" id="catUrl" placeholder="Paste single image link for categories">
+            <button style="background: #2874f0;" onclick="updateCategory()">Update Category</button>
+
+            <label style="margin-top: 30px;">Add Home Slider Image</label>
+            <input type="text" id="sliderUrl" placeholder="Paste slider image link">
+            <button style="background: #2874f0;" onclick="addSlider()">Add to Slider</button>
         </div>
 
-        <div class="input-group">
-            <label>Long Description Images (Features list)</label>
-            <input type="text" id="pDescImgs" placeholder="FeatureImgLink1, FeatureImgLink2...">
-            <span class="help-text">Ye images description ke niche lambi list mein dikhengi.</span>
+        <div class="card payment-box">
+            <h2>Payment Settings (UPI Link)</h2>
+            <label>UPI Payment URL</label>
+            <input type="text" id="upiUrl" placeholder="phonepe://pay?pa=yourvpa@ybl&am=99...">
+            <div class="hint">Jab user 'Continue' dabayega, wo is link par jayega.</div>
+            <button style="background: #388e3c;" onclick="updateUpiLink()">Save Payment Link</button>
         </div>
 
-        <button class="btn-main" onclick="saveProduct()">🚀 GO LIVE ON FLIPKART</button>
     </div>
 
-    <div class="card">
-        <h2>🎨 Layout Controls</h2>
-        
-        <div class="input-group">
-            <label>Add Home Slider Banner</label>
-            <div style="display: flex; gap: 10px;">
-                <input type="text" id="sUrl" placeholder="Paste banner image link...">
-                <button onclick="addSlider()" style="background:var(--f-blue); color:white; border:none; padding:0 15px; border-radius:4px; cursor:pointer;">ADD</button>
-            </div>
-        </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, set, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        <div class="input-group">
-            <label>Update Category Strip (Mobile Friendly)</label>
-            <div style="display: flex; gap: 10px;">
-                <input type="text" id="cUrl" placeholder="Paste category strip link...">
-                <button onclick="updateCat()" style="background:#388e3c; color:white; border:none; padding:0 15px; border-radius:4px; cursor:pointer;">UPDATE</button>
-            </div>
-        </div>
-    </div>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBfA-mFODccLz13nLpFQFI5Q2qBNIS2_KI",
+            authDomain: "flipkart-clone-ab903.firebaseapp.com",
+            databaseURL: "https://flipkart-clone-ab903-default-rtdb.firebaseio.com",
+            projectId: "flipkart-clone-ab903",
+            storageBucket: "flipkart-clone-ab903.firebasestorage.app",
+            messagingSenderId: "733319152647",
+            appId: "1:733319152647:web:cb5943fc21d8676bad16a2"
+        };
 
-    <div class="card">
-        <h2>🛒 Live Products</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Image</th>
-                    <th>Product Name</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="pBody">
-                </tbody>
-        </table>
-    </div>
-</div>
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
 
-<script type="module" src="app.js"></script>
+        // 1. Save Product Function
+        window.saveProduct = () => {
+            const name = document.getElementById('pName').value;
+            const images = document.getElementById('pImage').value;
+            const mrp = document.getElementById('pMRP').value;
+            const price = document.getElementById('pPrice').value;
+            const desc = document.getElementById('pDesc').value;
+            const descImgs = document.getElementById('pDescImgs').value;
 
+            if(name && images && price) {
+                const off = Math.round(((mrp - price) / mrp) * 100);
+                push(ref(db, 'products'), {
+                    name, image: images, mrp, price, off, desc, descImgs
+                }).then(() => {
+                    alert("Product Added Successfully!");
+                    location.reload();
+                });
+            } else {
+                alert("Name, Image, and Price are required!");
+            }
+        };
+
+        // 2. Update Category Strip
+        window.updateCategory = () => {
+            const url = document.getElementById('catUrl').value;
+            if(url) {
+                set(ref(db, 'catStrip'), { url }).then(() => alert("Category Strip Updated!"));
+            }
+        };
+
+        // 3. Add Home Slider Image
+        window.addSlider = () => {
+            const url = document.getElementById('sliderUrl').value;
+            if(url) {
+                push(ref(db, 'sliders'), { url }).then(() => alert("Slider Image Added!"));
+            }
+        };
+
+        // 4. Update UPI Link
+        window.updateUpiLink = () => {
+            const link = document.getElementById('upiUrl').value;
+            if(link) {
+                set(ref(db, 'paymentSettings'), { upiLink: link }).then(() => alert("UPI Link Saved!"));
+            }
+        };
+
+    </script>
 </body>
 </html>
