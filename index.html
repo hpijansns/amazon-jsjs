@@ -1,33 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flipkart - Shop Online</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="header-main">
         <div class="header-top">
-            <div style="display:flex; align-items:center; gap:10px;">
-                <span style="font-size:22px; color:white;">☰</span>
-                <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/flipkart-plus_8d85f4.png" style="height:18px;">
-            </div>
-            <div style="color:white; font-size:20px;">🛒</div>
+            <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/flipkart-plus_8d85f4.png" height="18">
+            <span style="color:white; font-size:18px;">🛒</span>
         </div>
-        <div class="search-bar-wrap">🔍 <input type="text" placeholder="Search for Products..."></div>
+        <div class="search-bar">🔍 <input type="text" placeholder="Search for Products..."></div>
     </div>
 
-    <div class="cat-scroll"><img id="catImgDisplay" src=""></div>
-    <div class="banner-wrap"><img id="sliderImg" src=""></div>
+    <div style="background:white;"><img id="catImgDisplay" src="" style="width:100%;"></div>
+    <div style="background:white;"><img id="sliderImg" src="" style="width:100%;"></div>
 
-    <div style="background:#607d8b; color:white; padding:12px; display:flex; justify-content:space-between; align-items:center;">
-        <div>Deals of the Day <span style="background:white; color:black; padding:2px 6px; border-radius:2px; font-weight:bold; font-size:13px; margin-left:5px;" id="countdown">10:00</span></div>
-        <div style="color:#ffeb3b; font-weight:bold; font-size:12px;">SALE LIVE</div>
+    <div style="background:#607d8b; color:white; padding:12px; display:flex; justify-content:space-between;">
+        <span>Deals of the Day</span>
+        <span id="countdown">10:00</span>
     </div>
 
     <div class="product-grid" id="productGrid"></div>
 
     <script type="module" src="app.js"></script>
+    <script>
+        let time = 600;
+        setInterval(() => {
+            let m = Math.floor(time/60), s = time%60;
+            if(document.getElementById('countdown')) 
+                document.getElementById('countdown').innerText = `${m}:${s<10?'0'+s:s}`;
+            if(time > 0) time--;
+        }, 1000);
+    </script>
 </body>
 </html>
