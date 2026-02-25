@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { background: #f1f3f6; padding-bottom: 70px; margin: 0; }
+        
+        /* Product Slider */
+        .slider { 
+            display: flex; 
+            overflow-x: auto; 
+            scroll-snap-type: x mandatory; 
+            background: white; 
+            -webkit-overflow-scrolling: touch;
+        }
+        .slider::-webkit-scrollbar { display: none; }
+        .slider img { 
+            width: 100%; 
+            flex-shrink: 0; 
+            height: 350px; 
+            object-fit: contain; 
+            scroll-snap-align: start; 
+        }
+
+        .white-section { background: white; padding: 15px; margin-bottom: 8px; }
+        
+        /* Warranty Card Style */
+        .warranty-card { 
+            border: 1px solid #e0e0e0; 
+            padding: 12px; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            border-radius: 4px; 
+            margin-top: 15px; 
+        }
+
+        /* Description Images */
+        .long-desc-imgs img { 
+            width: 100%; 
+            display: block; 
+            height: auto; 
+        }
+
+        /* Header Fix */
+        .header-details { 
+            background: #2874f0; 
+            color: white; 
+            padding: 12px; 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            position: sticky; 
+            top: 0; 
+            z-index: 100; 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-details">
+        <span onclick="history.back()" style="cursor:pointer; font-size:22px;">&larr;</span>
+        <span style="font-weight: 500;">Product Details</span>
+    </div>
+
+    <div class="slider" id="mainSlider"></div>
+
+    <div class="white-section">
+        <div id="title" style="font-size:15px; color:#212121; margin-bottom:10px; line-height:1.4;"></div>
+        
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <span id="off" style="color:#388e3c; font-weight:bold; font-size:18px;"></span>
+            <span id="mrp" style="text-decoration:line-through; color:#878787; font-size: 14px;"></span>
+        </div>
+        <div id="price" style="font-size:24px; font-weight:bold; margin-top: 4px;"></div>
+
+        <div class="warranty-card">
+            <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/fa_62965a.png" width="60">
+            <div style="font-size:11px;">
+                <strong>1 Year Brand Warranty</strong><br>
+                7 Days Replacement Policy
+            </div>
+        </div>
+    </div>
+
+    <div class="white-section">
+        <h4 style="margin: 0 0 10px 0; font-size: 14px; color: #212121;">Product Description</h4>
+        <p id="desc" style="font-size:13px; color:#555; line-height:1.6; margin: 0;"></p>
+    </div>
+
+    <div class="long-desc-imgs" id="descImagesSection"></div>
+
+    <div class="footer-btns">
+        <button class="cart-btn">ADD TO CART</button>
+        <button id="buyBtn" class="buy-btn">BUY NOW</button>
+    </div>
+
+    <script>
+        // Get data from URL parameters (Sent from index/app.js)
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        document.getElementById('title').innerText = urlParams.get('name');
+        document.getElementById('price').innerText = "₹" + urlParams.get('price');
+        document.getElementById('mrp').innerText = "₹" + urlParams.get('mrp');
+        document.getElementById('off').innerText = urlParams.get('off') + "% Off";
+        document.getElementById('desc').innerText = urlParams.get('desc') || "No description available.";
+
+        // Render Slider Images
+        const imgString = urlParams.get('img');
+        if(imgString) {
+            imgString.split(',').map(s => s.trim()).filter(Boolean).forEach(url => {
+                const img = document.createElement('img');
+                img.src = url;
+                document.getElementById('mainSlider').appendChild(img);
+            });
+        }
+
+        // Render Long Description Images
+        const descImgString = urlParams.get('descImgs');
+        if(descImgString) {
+            descImgString.split(',').map(s => s.trim()).filter(Boolean).forEach(url => {
+                const dImg = document.createElement('img');
+                dImg.src = url;
+                document.getElementById('descImagesSection').appendChild(dImg);
+            });
+        }
+
+        // Redirection to Next Step (Delivery Address)
+        document.getElementById('buyBtn').onclick = () => {
+            window.location.href = `delivery-address.html?${window.location.search.toString()}`;
+        };
+    </script>
+</body>
+</html>
