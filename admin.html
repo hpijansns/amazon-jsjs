@@ -3,89 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flipkart Clone - Admin Panel</title>
+    <title>Master Admin - Flipkart Clone</title>
     <style>
         body { font-family: sans-serif; background: #f4f7f6; margin: 0; display: flex; }
-        .sidebar { width: 250px; background: #2874f0; color: white; height: 100vh; position: fixed; padding: 20px; }
-        .main-content { margin-left: 290px; padding: 30px; width: 100%; }
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        h2 { color: #2874f0; margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .sidebar { width: 220px; background: #2874f0; color: white; height: 100vh; position: fixed; padding: 20px; }
+        .main-content { margin-left: 260px; padding: 20px; width: calc(100% - 280px); }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        h2 { color: #2874f0; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         
-        label { display: block; margin-top: 15px; font-weight: bold; font-size: 13px; color: #555; }
-        input, textarea, select { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        input, textarea { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .btn-save { background: #fb641b; color: white; border: none; padding: 12px; cursor: pointer; width: 100%; font-weight: bold; border-radius: 4px; }
+        .btn-upi { background: #388e3c; margin-top: 10px; }
         
-        button { background: #fb641b; color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 20px; width: 100%; }
-        button:hover { background: #e65a16; }
-        
-        .payment-box { background: #fff3e0; border-left: 5px solid #ff9800; }
-        .hint { font-size: 11px; color: #888; margin-top: 4px; }
+        /* Table Style */
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
+        th, td { border: 1px solid #eee; padding: 12px; text-align: left; }
+        th { background: #f8f9fa; color: #333; }
+        .prod-img { width: 50px; height: 50px; object-fit: contain; }
+        .action-btns button { padding: 5px 10px; margin-right: 5px; cursor: pointer; border: none; border-radius: 3px; }
+        .edit-btn { background: #ffc107; color: black; }
+        .del-btn { background: #dc3545; color: white; }
     </style>
 </head>
 <body>
 
     <div class="sidebar">
-        <h2>Flipkart Admin</h2>
+        <h3>Flipkart Admin</h3>
         <p>Dashboard</p>
+        <hr>
         <p>Manage Products</p>
-        <p>Slider Settings</p>
-        <p>Payment Config</p>
+        <p>Settings</p>
     </div>
 
     <div class="main-content">
         
-        <div class="card">
-            <h2>Add New Product</h2>
-            <label>Product Name</label>
-            <input type="text" id="pName" placeholder="e.g. Apple iPhone 15 (Blue, 128 GB)">
-            
-            <label>Main Images (Comma Separated for Slider)</label>
-            <textarea id="pImage" placeholder="link1.jpg, link2.jpg, link3.jpg"></textarea>
-            <div class="hint">Details page par slider dikhane ke liye multiple links comma (,) se alag karein.</div>
+        <div class="card" style="background: #e3f2fd;">
+            <h2>Payment Settings</h2>
+            <label>UPI ID (VPA):</label>
+            <input type="text" id="upiVpa" placeholder="example@ybl">
+            <button class="btn-save btn-upi" onclick="saveUpi()">Save UPI ID</button>
+            <p id="upiStatus" style="font-size: 12px; color: green; margin-top: 5px;"></p>
+        </div>
 
-            <div style="display: flex; gap: 15px;">
-                <div style="flex: 1;">
-                    <label>MRP (Actual Price)</label>
-                    <input type="number" id="pMRP" placeholder="11999">
-                </div>
-                <div style="flex: 1;">
-                    <label>Sale Price (Display Price)</label>
-                    <input type="number" id="pPrice" placeholder="99">
-                </div>
+        <div class="card">
+            <h2 id="formTitle">Add New Product</h2>
+            <input type="hidden" id="editKey">
+            <input type="text" id="pName" placeholder="Product Name">
+            <textarea id="pImages" placeholder="Images Links (Comma separated for multiple)"></textarea>
+            <div style="display: flex; gap: 10px;">
+                <input type="number" id="pMRP" placeholder="MRP">
+                <input type="number" id="pPrice" placeholder="Selling Price">
             </div>
-
-            <label>Product Description (Text)</label>
-            <textarea id="pDesc" rows="3" placeholder="Write about product features..."></textarea>
-
-            <label>Description Images (Long Images Link)</label>
-            <textarea id="pDescImgs" placeholder="feature-img1.jpg, feature-img2.jpg"></textarea>
-            
-            <button onclick="saveProduct()">Upload Product</button>
+            <textarea id="pDesc" placeholder="Description Text"></textarea>
+            <textarea id="pDescImgs" placeholder="Description Images Links (Comma separated)"></textarea>
+            <button class="btn-save" id="saveBtn" onclick="handleProduct()">Save Product</button>
         </div>
 
         <div class="card">
-            <h2>Slider & Category</h2>
-            <label>Update Category Strip URL</label>
-            <input type="text" id="catUrl" placeholder="Paste single image link for categories">
-            <button style="background: #2874f0;" onclick="updateCategory()">Update Category</button>
-
-            <label style="margin-top: 30px;">Add Home Slider Image</label>
-            <input type="text" id="sliderUrl" placeholder="Paste slider image link">
-            <button style="background: #2874f0;" onclick="addSlider()">Add to Slider</button>
+            <h2>Live Products</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="productTableBody">
+                    </tbody>
+            </table>
         </div>
-
-        <div class="card payment-box">
-            <h2>Payment Settings (UPI Link)</h2>
-            <label>UPI Payment URL</label>
-            <input type="text" id="upiUrl" placeholder="phonepe://pay?pa=yourvpa@ybl&am=99...">
-            <div class="hint">Jab user 'Continue' dabayega, wo is link par jayega.</div>
-            <button style="background: #388e3c;" onclick="updateUpiLink()">Save Payment Link</button>
-        </div>
-
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, set, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, set, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBfA-mFODccLz13nLpFQFI5Q2qBNIS2_KI",
@@ -100,52 +93,97 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // 1. Save Product Function
-        window.saveProduct = () => {
-            const name = document.getElementById('pName').value;
-            const images = document.getElementById('pImage').value;
-            const mrp = document.getElementById('pMRP').value;
-            const price = document.getElementById('pPrice').value;
-            const desc = document.getElementById('pDesc').value;
-            const descImgs = document.getElementById('pDescImgs').value;
+        // --- 1. UPI ID Persistence ---
+        onValue(ref(db, 'paymentSettings/vpaID'), (snap) => {
+            if(snap.exists()) {
+                document.getElementById('upiVpa').value = snap.val();
+                document.getElementById('upiStatus').innerText = "✓ UPI ID is active in database";
+            }
+        });
 
-            if(name && images && price) {
-                const off = Math.round(((mrp - price) / mrp) * 100);
-                push(ref(db, 'products'), {
-                    name, image: images, mrp, price, off, desc, descImgs
-                }).then(() => {
-                    alert("Product Added Successfully!");
-                    location.reload();
-                });
+        window.saveUpi = () => {
+            const vpa = document.getElementById('upiVpa').value;
+            set(ref(db, 'paymentSettings/vpaID'), vpa).then(() => alert("UPI Saved!"));
+        };
+
+        // --- 2. Load Products into Table ---
+        onValue(ref(db, 'products'), (snapshot) => {
+            const tableBody = document.getElementById('productTableBody');
+            tableBody.innerHTML = "";
+            snapshot.forEach((child) => {
+                const data = child.val();
+                const key = child.key;
+                const firstImg = data.image.split(',')[0].trim();
+
+                tableBody.innerHTML += `
+                    <tr>
+                        <td><img src="${firstImg}" class="prod-img"></td>
+                        <td>${data.name}</td>
+                        <td>₹${data.price}</td>
+                        <td class="action-btns">
+                            <button class="edit-btn" onclick="editProduct('${key}')">Edit</button>
+                            <button class="del-btn" onclick="deleteProduct('${key}')">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        });
+
+        // --- 3. Add/Update Product Logic ---
+        window.handleProduct = () => {
+            const key = document.getElementById('editKey').value;
+            const product = {
+                name: document.getElementById('pName').value,
+                image: document.getElementById('pImages').value,
+                mrp: document.getElementById('pMRP').value,
+                price: document.getElementById('pPrice').value,
+                desc: document.getElementById('pDesc').value,
+                descImgs: document.getElementById('pDescImgs').value,
+                off: Math.round(((document.getElementById('pMRP').value - document.getElementById('pPrice').value) / document.getElementById('pMRP').value) * 100)
+            };
+
+            if(key) {
+                // Update existing
+                update(ref(db, `products/${key}`), product).then(() => resetForm());
             } else {
-                alert("Name, Image, and Price are required!");
+                // Add new
+                push(ref(db, 'products'), product).then(() => resetForm());
             }
         };
 
-        // 2. Update Category Strip
-        window.updateCategory = () => {
-            const url = document.getElementById('catUrl').value;
-            if(url) {
-                set(ref(db, 'catStrip'), { url }).then(() => alert("Category Strip Updated!"));
+        window.editProduct = (key) => {
+            onValue(ref(db, `products/${key}`), (snap) => {
+                const data = snap.val();
+                document.getElementById('editKey').value = key;
+                document.getElementById('pName').value = data.name;
+                document.getElementById('pImages').value = data.image;
+                document.getElementById('pMRP').value = data.mrp;
+                document.getElementById('pPrice').value = data.price;
+                document.getElementById('pDesc').value = data.desc;
+                document.getElementById('pDescImgs').value = data.descImgs;
+                document.getElementById('formTitle').innerText = "Edit Product";
+                document.getElementById('saveBtn').innerText = "Update Product";
+            }, { onlyOnce: true });
+        };
+
+        window.deleteProduct = (key) => {
+            if(confirm("Delete this product?")) {
+                remove(ref(db, `products/${key}`));
             }
         };
 
-        // 3. Add Home Slider Image
-        window.addSlider = () => {
-            const url = document.getElementById('sliderUrl').value;
-            if(url) {
-                push(ref(db, 'sliders'), { url }).then(() => alert("Slider Image Added!"));
-            }
-        };
-
-        // 4. Update UPI Link
-        window.updateUpiLink = () => {
-            const link = document.getElementById('upiUrl').value;
-            if(link) {
-                set(ref(db, 'paymentSettings'), { upiLink: link }).then(() => alert("UPI Link Saved!"));
-            }
-        };
-
+        function resetForm() {
+            document.getElementById('editKey').value = "";
+            document.getElementById('pName').value = "";
+            document.getElementById('pImages').value = "";
+            document.getElementById('pMRP').value = "";
+            document.getElementById('pPrice').value = "";
+            document.getElementById('pDesc').value = "";
+            document.getElementById('pDescImgs').value = "";
+            document.getElementById('formTitle').innerText = "Add New Product";
+            document.getElementById('saveBtn').innerText = "Save Product";
+            alert("Success!");
+        }
     </script>
 </body>
 </html>
