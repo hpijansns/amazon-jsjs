@@ -1,28 +1,72 @@
-:root { --f-blue: #2874f0; --f-orange: #fb641b; --f-green: #388e3c; --f-bg: #f1f3f6; }
-body { margin: 0; font-family: -apple-system, sans-serif; background: var(--f-bg); color: #212121; overflow-x: hidden; }
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, push, onValue, remove, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-/* Header */
-.header-main { background: var(--f-blue); padding: 8px 12px; position: sticky; top: 0; z-index: 1000; }
-.header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-.search-bar-wrap { background: white; display: flex; align-items: center; padding: 0 10px; border-radius: 2px; }
-.search-bar-wrap input { border: none; padding: 10px; width: 100%; outline: none; font-size: 14px; }
+const firebaseConfig = {
+    apiKey: "AIzaSyBfA-mFODccLz13nLpFQFI5Q2qBNIS2_KI",
+    authDomain: "flipkart-clone-ab903.firebaseapp.com",
+    databaseURL: "https://flipkart-clone-ab903-default-rtdb.firebaseio.com",
+    projectId: "flipkart-clone-ab903",
+    storageBucket: "flipkart-clone-ab903.firebasestorage.app",
+    messagingSenderId: "733319152647",
+    appId: "1:733319152647:web:cb5943fc21d8676bad16a2"
+};
 
-/* Categories */
-.cat-scroll { background: white; padding: 5px 0; border-bottom: 1px solid #e0e0e0; }
-.cat-scroll img { width: 100%; height: auto; display: block; object-fit: contain; }
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
 
-/* Product Grid */
-.product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; }
-.card { background: white; padding: 10px; text-decoration: none; color: inherit; display: flex; flex-direction: column; }
-.card .img-box { height: 150px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-.card .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
-.p-title { font-size: 13px; margin: 8px 0; height: 32px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-.p-off { color: var(--f-green); font-weight: bold; font-size: 14px; }
-.p-mrp { text-decoration: line-through; color: #878787; font-size: 12px; margin-left: 5px; }
-.p-price { font-size: 16px; font-weight: bold; margin-top: 4px; }
-.assured-img { width: 60px; margin-top: 5px; }
+// --- Admin: Save Product ---
+window.saveProduct = () => {
+    const name = document.getElementById('pName').value;
+    const images = document.getElementById('pImage').value; 
+    const mrp = document.getElementById('pMRP').value;
+    const price = document.getElementById('pPrice').value;
+    const desc = document.getElementById('pDesc').value;
+    const descImgs = document.getElementById('pDescImgs').value;
 
-/* Footer Bar */
-.footer-btns { position: fixed; bottom: 0; width: 100%; height: 52px; display: flex; background: white; z-index: 1000; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); }
-.cart-btn { width: 50%; background: white; border: none; font-weight: bold; font-size: 14px; }
-.buy-btn { width: 50%; background: #ff9f00; border: none; color: white; font-weight: bold; font-size: 14px; }
+    if(name && images && price) {
+        const discount = Math.round(((mrp - price) / mrp) * 100);
+        push(ref(database, 'products'), {
+            name, image: images, mrp, price, off: discount, desc, descImgs
+        }).then(() => { alert("Success!"); location.reload(); });
+    }
+};
+
+// --- Home Page: Load Products ---
+onValue(ref(database, 'products'), (snapshot) => {
+    const grid = document.getElementById('productGrid');
+    if(!grid) return;
+    grid.innerHTML = "";
+    
+    snapshot.forEach(child => {
+        const data = child.val();
+        // Fix: Remove empty/extra commas to prevent invisible cards
+        const imageList = data.image.split(',').map(img => img.trim()).filter(Boolean);
+        const thumb = imageList[0];
+
+        const detailUrl = `product.html?name=${encodeURIComponent(data.name)}&img=${encodeURIComponent(data.image)}&mrp=${data.mrp}&price=${data.price}&off=${data.off}&desc=${encodeURIComponent(data.desc || '')}&descImgs=${encodeURIComponent(data.descImgs || '')}`;
+
+        grid.innerHTML += `
+            <a href="${detailUrl}" class="card">
+                <div class="img-box"><img src="${thumb}"></div>
+                <div class="p-title">${data.name}</div>
+                <div><span class="p-off">${data.off}% Off</span> <span class="p-mrp">₹${data.mrp}</span></div>
+                <div class="p-price">₹${data.price}</div>
+                <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/fa_62965a.png" class="assured-img">
+            </a>`;
+    });
+});
+
+// --- Slider & Category ---
+onValue(ref(database, 'sliders'), (snap) => {
+    const urls = []; snap.forEach(c => urls.push(c.val().url));
+    const sImg = document.getElementById('sliderImg');
+    if(urls.length > 0 && sImg){ 
+        let i = 0; sImg.src = urls[0]; 
+        setInterval(() => { i = (i + 1) % urls.length; sImg.src = urls[i]; }, 3000); 
+    }
+});
+
+onValue(ref(database, 'catStrip'), (snap) => {
+    if(document.getElementById('catImgDisplay') && snap.val()) 
+        document.getElementById('catImgDisplay').src = snap.val().url;
+});
