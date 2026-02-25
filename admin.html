@@ -3,112 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flipkart Clone - Admin Dashboard</title>
+    <title>Flipkart Admin - Control Panel</title>
     <style>
-        :root { --blue: #2874f0; --orange: #fb641b; --bg: #f1f3f6; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; padding: 20px; }
-        .container { max-width: 900px; margin: auto; }
-        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 30px; }
-        h2 { color: var(--blue); margin-top: 0; border-bottom: 2px solid var(--bg); padding-bottom: 10px; }
+        :root { --f-blue: #2874f0; --f-orange: #fb641b; --bg: #f1f3f6; }
+        body { font-family: -apple-system, sans-serif; background: var(--bg); margin: 0; padding: 20px; }
+        .admin-container { max-width: 800px; margin: auto; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        h2 { color: var(--f-blue); margin-top: 0; font-size: 20px; border-bottom: 2px solid var(--bg); padding-bottom: 10px; }
         
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .full-width { grid-column: span 2; }
-        
+        .input-group { margin-bottom: 15px; }
         label { display: block; font-size: 12px; font-weight: bold; color: #666; margin-bottom: 5px; text-transform: uppercase; }
-        input, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 14px; margin-bottom: 15px; }
-        input:focus, textarea:focus { border-color: var(--blue); outline: none; }
+        input, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
+        textarea { resize: vertical; }
         
-        .btn-upload { background: var(--orange); color: white; border: none; padding: 15px; width: 100%; border-radius: 4px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; }
-        .btn-upload:hover { background: #e85a15; }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .btn-main { background: var(--f-orange); color: white; border: none; padding: 15px; width: 100%; border-radius: 4px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; }
+        .btn-main:hover { background: #e85a15; }
         
-        .help-text { font-size: 11px; color: #888; margin-top: -12px; margin-bottom: 15px; display: block; }
+        .help-text { font-size: 11px; color: #888; margin-top: 4px; display: block; }
         
-        /* Table Styles */
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; font-size: 14px; }
-        th { background: var(--blue); color: white; padding: 12px; text-align: left; }
-        td { padding: 12px; border-bottom: 1px solid #eee; }
-        .p-thumb { width: 40px; height: 40px; object-fit: contain; background: #f9f9f9; border-radius: 4px; }
-        
-        /* Slider Preview */
-        #sList { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; }
+        /* Product List Table */
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
+        th { background: var(--f-blue); color: white; padding: 10px; text-align: left; font-size: 13px; }
+        td { padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; }
+        .delete-btn { background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="admin-container">
     <div class="card">
-        <h2>📦 Product Management</h2>
-        <div class="form-grid">
-            <div class="full-width">
-                <label>Product Full Name</label>
-                <input type="text" id="pName" placeholder="e.g. Apple iPhone 15 (Blue, 128 GB)">
-            </div>
-            
-            <div class="full-width">
-                <label>Main Images (Comma Separated)</label>
-                <input type="text" id="pImage" placeholder="Link1, Link2, Link3...">
-                <span class="help-text">* Tip: Pehla link thumbnail banega. Dusre links slider mein dikhenge.</span>
-            </div>
+        <h2>📦 Add New Product</h2>
+        <div class="input-group">
+            <label>Product Name</label>
+            <input type="text" id="pName" placeholder="e.g. Apple iPhone 15 (Blue, 128 GB)">
+        </div>
+        
+        <div class="input-group">
+            <label>Product Images (Main Slider)</label>
+            <input type="text" id="pImage" placeholder="Link1, Link2, Link3...">
+            <span class="help-text">Multiple links ko comma (,) se alag karein. Pehla link grid mein dikhega.</span>
+        </div>
 
-            <div>
+        <div class="row">
+            <div class="input-group">
                 <label>MRP Price (₹)</label>
                 <input type="number" id="pMRP" placeholder="79900">
             </div>
-            <div>
+            <div class="input-group">
                 <label>Selling Price (₹)</label>
                 <input type="number" id="pPrice" placeholder="65999">
             </div>
+        </div>
 
-            <div class="full-width">
-                <label>Delivery Info</label>
-                <input type="text" id="pDelivery" placeholder="e.g. Free Delivery by Tomorrow">
-            </div>
+        <div class="input-group">
+            <label>Text Description</label>
+            <textarea id="pDesc" rows="3" placeholder="Product ke main features yahan likhein..."></textarea>
+        </div>
 
-            <div class="full-width">
-                <label>Short Description (Text)</label>
-                <textarea id="pDesc" rows="3" placeholder="Write main features here..."></textarea>
-            </div>
+        <div class="input-group">
+            <label>Long Description Images (Features list)</label>
+            <input type="text" id="pDescImgs" placeholder="FeatureImgLink1, FeatureImgLink2...">
+            <span class="help-text">Ye images description ke niche lambi list mein dikhengi.</span>
+        </div>
 
-            <div class="full-width">
-                <label>Long Description Images (Comma Separated)</label>
-                <input type="text" id="pDescImgs" placeholder="DetailLink1, DetailLink2...">
-                <span class="help-text">* Ye images description ke niche lambi list ki tarah aayengi.</span>
+        <button class="btn-main" onclick="saveProduct()">🚀 GO LIVE ON FLIPKART</button>
+    </div>
+
+    <div class="card">
+        <h2>🎨 Layout Controls</h2>
+        
+        <div class="input-group">
+            <label>Add Home Slider Banner</label>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="sUrl" placeholder="Paste banner image link...">
+                <button onclick="addSlider()" style="background:var(--f-blue); color:white; border:none; padding:0 15px; border-radius:4px; cursor:pointer;">ADD</button>
             </div>
         </div>
-        <button class="btn-upload" onclick="saveProduct()">🚀 UPLOAD PRODUCT</button>
 
-        <h3>Live Inventory</h3>
+        <div class="input-group">
+            <label>Update Category Strip (Mobile Friendly)</label>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="cUrl" placeholder="Paste category strip link...">
+                <button onclick="updateCat()" style="background:#388e3c; color:white; border:none; padding:0 15px; border-radius:4px; cursor:pointer;">UPDATE</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>🛒 Live Products</h2>
         <table>
             <thead>
                 <tr>
-                    <th>Img</th>
+                    <th>Image</th>
                     <th>Product Name</th>
-                    <th>Price</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody id="pBody">
                 </tbody>
         </table>
-    </div>
-
-    <div class="card">
-        <h2>🎨 App Layout Controls</h2>
-        
-        <label>Slider Banner URL</label>
-        <div style="display: flex; gap: 10px;">
-            <input type="text" id="sUrl" placeholder="Paste banner image link here...">
-            <button onclick="addSlider()" style="background: var(--blue); color:white; border:none; padding: 0 20px; border-radius:4px; height:42px; cursor:pointer;">ADD</button>
-        </div>
-        <div id="sList"></div>
-
-        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
-
-        <label>Category Strip Image URL</label>
-        <div style="display: flex; gap: 10px;">
-            <input type="text" id="cUrl" placeholder="Paste category strip image link...">
-            <button onclick="updateCat()" style="background: #388e3c; color:white; border:none; padding: 0 20px; border-radius:4px; height:42px; cursor:pointer;">UPDATE</button>
-        </div>
     </div>
 </div>
 
