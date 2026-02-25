@@ -29,12 +29,9 @@
         .option-name { font-size: 15px; font-weight: 500; }
         .option-sub { font-size: 12px; color: #388e3c; margin-top: 2px; }
         
-        /* COD Disabled Style */
+        /* COD Disabled */
         .disabled-opt { opacity: 0.6; cursor: not-allowed; background: #fafafa; }
         .disabled-msg { color: #d32f2f; font-size: 11px; font-weight: bold; margin-top: 4px; }
-
-        /* Price Brief */
-        .price-brief { background: white; padding: 15px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e0e0e0; }
 
         /* Bottom Bar */
         .bottom-bar { position: fixed; bottom: 0; width: 100%; height: 65px; background: white; display: flex; align-items: center; padding: 0 15px; box-sizing: border-box; border-top: 1px solid #e0e0e0; justify-content: space-between; }
@@ -60,8 +57,8 @@
     <div class="option-card" onclick="document.getElementById('upi').checked=true">
         <input type="radio" name="pay" id="upi" checked>
         <div class="option-info">
-            <div class="option-name">UPI</div>
-            <div class="option-sub">Google Pay, PhonePe, BHIM UPI</div>
+            <div class="option-name">UPI (Google Pay / PhonePe / Paytm)</div>
+            <div class="option-sub">Pay directly using any UPI App</div>
         </div>
         <img src="https://img1a.flixcart.com/www/linchpin/fk-cp-zion/img/payment-method-upi_60a63c.png" width="30">
     </div>
@@ -70,7 +67,7 @@
         <input type="radio" name="pay" id="card">
         <div class="option-info">
             <div class="option-name">Credit / Debit / ATM Card</div>
-            <div class="option-sub">Visa, Mastercard, RuPay & more</div>
+            <div class="option-sub">All major cards supported</div>
         </div>
     </div>
 
@@ -80,11 +77,6 @@
             <div class="option-name">Cash on Delivery</div>
             <div class="disabled-msg">✕ Not available for this order</div>
         </div>
-    </div>
-
-    <div class="price-brief">
-        <span style="font-weight: 500; font-size: 14px;">Amount Payable</span>
-        <span id="finalAmt" style="font-weight: bold; font-size: 18px;">₹99</span>
     </div>
 
     <div class="bottom-bar">
@@ -112,40 +104,47 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        let upiLinkFromAdmin = "";
+        let adminVpa = ""; // Admin Panel se aayega
 
-        // Fetch UPI Link from Firebase
-        onValue(ref(db, 'paymentSettings/upiLink'), (snapshot) => {
-            upiLinkFromAdmin = snapshot.val();
+        // Admin se UPI ID (VPA) fetch karna
+        onValue(ref(db, 'paymentSettings/vpaID'), (snapshot) => {
+            adminVpa = snapshot.val();
         });
 
-        // Price from URL
+        // URL parameters se price aur details lena
         const p = new URLSearchParams(window.location.search);
-        const price = p.get('price') || "99";
+        const productPrice = p.get('price') || "99";
+        const productName = p.get('name') || "Flipkart Order";
         const mrp = p.get('mrp') || "11999";
 
-        document.getElementById('finalAmt').innerText = "₹" + price;
-        document.getElementById('bottomAmt').innerText = "₹" + price;
+        document.getElementById('bottomAmt').innerText = "₹" + productPrice;
         document.getElementById('strikeAmt').innerText = "₹" + mrp;
 
         window.processPayment = function() {
             const isUpi = document.getElementById('upi').checked;
             
             if(isUpi) {
-                if(upiLinkFromAdmin) {
+                if(adminVpa) {
                     const btn = document.querySelector('.pay-btn');
-                    btn.innerText = "Redirecting...";
+                    btn.innerText = "Opening UPI...";
                     btn.disabled = true;
                     
-                    // Direct to Admin's Payment Link
+                    // DYNAMIC UPI LINK: Isme Price auto-fill hota hai
+                    const upiUri = `upi://pay?pa=${adminVpa}&pn=Flipkart&am=${productPrice}&cu=INR&tn=Payment for ${productName}`;
+                    
                     setTimeout(() => {
-                        window.location.href = upiLinkFromAdmin;
-                    }, 800);
+                        window.location.href = upiUri;
+                        
+                        // Payment ke baad Success Page par bhejne ke liye timer
+                        setTimeout(() => {
+                            window.location.href = "success.html";
+                        }, 5000);
+                    }, 500);
                 } else {
-                    alert("Technical Error: Payment link not configured by Admin.");
+                    alert("Error: Admin has not set UPI ID in Admin Panel!");
                 }
             } else {
-                alert("Please select UPI as the payment method.");
+                alert("Please select UPI payment method.");
             }
         }
     </script>
