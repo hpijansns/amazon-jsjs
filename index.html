@@ -1,37 +1,113 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        body { background: #f1f3f6; padding-bottom: 70px; }
+        .white-section { background: white; padding: 15px; margin-bottom: 8px; }
+        
+        /* Multiple Images Slider */
+        .img-slider { 
+            display: flex; 
+            overflow-x: auto; 
+            scroll-snap-type: x mandatory; 
+            background: white; 
+        }
+        .img-slider img { 
+            width: 100%; 
+            flex-shrink: 0; 
+            height: 350px; 
+            object-fit: contain; 
+            scroll-snap-align: start; 
+        }
+
+        /* Long Description Images */
+        .desc-images-container img { 
+            width: 100%; 
+            display: block; 
+        }
+
+        /* Flipkart Trust Card */
+        .warranty-card { 
+            border: 1px solid #e0e0e0; 
+            padding: 12px; 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            border-radius: 4px; 
+            margin-top: 15px; 
+        }
+    </style>
 </head>
 <body>
-    <div class="header-main">
-        <div class="header-top">
-            <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/flipkart-plus_8d85f4.png" height="18">
-            <span style="color:white; font-size:18px;">🛒</span>
+
+    <div class="header-main" style="display:flex; align-items:center; gap:15px; color:white; background:#2874f0; padding:12px;">
+        <span onclick="history.back()" style="cursor:pointer; font-size:20px;">&larr;</span>
+        <div style="flex:1">Product Details</div>
+    </div>
+
+    <div class="img-slider" id="mainSlider"></div>
+
+    <div class="white-section">
+        <h1 id="pTitle" style="font-size:16px; font-weight:normal; margin:0 0 10px 0; color:#212121;"></h1>
+        <div style="margin-bottom:5px;">
+            <span id="pOff" style="color:#388e3c; font-weight:bold; font-size:18px;"></span>
+            <span id="pMrp" style="text-decoration:line-through; color:#878787; margin-left:8px;"></span>
         </div>
-        <div class="search-bar">🔍 <input type="text" placeholder="Search for Products..."></div>
+        <div id="pPrice" style="font-size:24px; font-weight:bold;"></div>
+
+        <div class="warranty-card">
+            <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/fa_62965a.png" width="60">
+            <div style="font-size:12px;">
+                <strong>1 Year Brand Warranty</strong><br>
+                <span style="color:#2874f0;">View Details</span>
+            </div>
+        </div>
     </div>
 
-    <div style="background:white;"><img id="catImgDisplay" src="" style="width:100%;"></div>
-    <div style="background:white;"><img id="sliderImg" src="" style="width:100%;"></div>
-
-    <div style="background:#607d8b; color:white; padding:12px; display:flex; justify-content:space-between;">
-        <span>Deals of the Day</span>
-        <span id="countdown">10:00</span>
+    <div class="white-section">
+        <h3 style="font-size:14px; margin-top:0;">Product Description</h3>
+        <p id="pDesc" style="font-size:13px; color:#666; line-height:1.6;"></p>
     </div>
 
-    <div class="product-grid" id="productGrid"></div>
+    <div class="desc-images-container" id="descImages"></div>
 
-    <script type="module" src="app.js"></script>
+    <div class="footer-btns">
+        <button class="cart-btn">ADD TO CART</button>
+        <button id="buyNow" class="buy-btn">BUY NOW</button>
+    </div>
+
     <script>
-        let time = 600;
-        setInterval(() => {
-            let m = Math.floor(time/60), s = time%60;
-            if(document.getElementById('countdown')) 
-                document.getElementById('countdown').innerText = `${m}:${s<10?'0'+s:s}`;
-            if(time > 0) time--;
-        }, 1000);
+        // Get data from URL
+        const params = new URLSearchParams(window.location.search);
+        
+        document.getElementById('pTitle').innerText = params.get('name');
+        document.getElementById('pPrice').innerText = "₹" + params.get('price');
+        document.getElementById('pMrp').innerText = "₹" + params.get('mrp');
+        document.getElementById('pOff').innerText = params.get('off') + "% Off";
+        document.getElementById('pDesc').innerText = params.get('desc');
+
+        // Main Images Slider
+        const mainImgs = params.get('img').split(',').map(s => s.trim()).filter(Boolean);
+        mainImgs.forEach(url => {
+            document.getElementById('mainSlider').innerHTML += `<img src="${url}">`;
+        });
+
+        // Long Feature Images
+        const descImgs = params.get('descImgs');
+        if(descImgs) {
+            descImgs.split(',').map(s => s.trim()).filter(Boolean).forEach(url => {
+                document.getElementById('descImages').innerHTML += `<img src="${url}">`;
+            });
+        }
+
+        // Move to Address Page
+        document.getElementById('buyNow').onclick = () => {
+            window.location.href = `delivery-address.html?${window.location.search.toString()}`;
+        };
     </script>
 </body>
 </html>
